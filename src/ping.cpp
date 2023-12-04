@@ -1,13 +1,23 @@
 #include<raylib.h>
+#include<iostream>
 #include<string>
+#include<fstream>
+// #include<json.hpp>
 
+// using json = nlohmann::json;
 
 
 class Game{
 
+    protected: 
     // individual score
     int score;
     int highScore;
+    int tryCount;
+
+    // rect
+    int rectX;
+    int rectY;
 
     // line
     int lineX;
@@ -19,20 +29,38 @@ class Game{
     int ballY;
     int ballSpeedX;
     int ballSpeedY;
-    int radius;  
+    int radius; 
+
+    // player
+    char userName[20]; 
+
 
     public:
     // init
     Game() {
+
         ballX = 100;
         ballY = 100;
         ballSpeedX = 5;
         ballSpeedY = 5;
+
+        rectX = GetScreenWidth()/6 - 50;
+        rectY = GetScreenHeight()/4;
+
         radius = 15;
 
         lineX = GetScreenWidth()/2;
         lineY = GetScreenHeight() - 50;
         lineSpeedX = 5;
+
+        score = 0;
+        highScore = 0;
+        tryCount = 1;
+
+        std::cout << "Enter Player Name: "<< std::endl;
+        std::cin>>userName;
+        //getLine(std::cin, userName);
+
     }
 
 
@@ -50,12 +78,14 @@ class Game{
 
 
         // check if ball hits line
-        if (ballY + radius >= lineY && ballX >= lineX - 50 && ballX <= lineX + 50) {
+        // error in this logic
+        if (ballY + radius >= lineY && ballX + radius >= lineX - 50 && ballX + radius <= lineX + 50) {
             ballSpeedY *= -1;
             score+=1;
-            if(score > highScore){
-                highScore = score;
-            }
+        }  
+
+        if(score > highScore){
+            highScore = score;
         }
 
         // check if ball hits bottom
@@ -63,6 +93,7 @@ class Game{
             ballX = 100;
             ballY = 100;
             score = 0;
+            // tryCount += 1;
         }
 
         // check if ball hits ball
@@ -70,6 +101,7 @@ class Game{
     }
 
     void drawBall() {
+
         DrawCircle(ballX, ballY, radius, WHITE);
     }
 
@@ -79,7 +111,7 @@ class Game{
         Vector2 start = { static_cast<float>(lineX - 50), static_cast<float>(lineY) };
         Vector2 end = { static_cast<float>(lineX + 50), static_cast<float>(lineY) };
         
-        DrawLineEx(start, end, 2.0f, BLACK);  
+        DrawLineEx(start, end, 2.0f, WHITE);  
     }
 
     void updateLine(){
@@ -96,21 +128,12 @@ class Game{
         }
     }
 
-    void displayScore() {
-        DrawText(("Score: " + std::to_string(score)).c_str(), 10, 10, 20, WHITE);
-        DrawText(("High Score: " + std::to_string(highScore)).c_str(), 10, 30, 20, WHITE);
+    void displayUserScore() {
+        DrawText(("Player : " + std::string(userName)).c_str(), 10, 50, 20, WHITE);
+        DrawText(("Score : " + std::to_string(score)).c_str(), 10, 10, 20, WHITE);
+        DrawText(("High Score : " + std::to_string(highScore)).c_str(), 10, 30, 20, WHITE);
     }
 
-
-    // void createProfile(){}   
-    // void loadProfile(){}
-    // void saveProfile(){}
-    // void deleteProfile(){}
-    // void displayProfile(){}
-    // void displayLeaderboard(){}
-    // void displaySettings(){}
-    // void displayCredits(){}
-    // void displayHelp(){}
-    // void displayAbout(){}
-
 };
+
+
